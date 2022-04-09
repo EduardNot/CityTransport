@@ -32,28 +32,27 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-07T09:02:41.194Z[GMT]")
 @Validated
 public interface BusStopsApi {
 
-    @Operation(summary = "Create a bus stop", description = "Creates a bus stop with given name and location and stores it in the database.", tags={ "LineMangagment" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Returned bus stop object with fullfilled id field from database.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = BusStop.class))) })
+    @Operation(summary = "Create a bus stop", description = "Creates a bus stop with given name and location and stores it in the database.", tags = {"LineMangagment"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returned bus stop object with fullfilled id field from database.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = BusStop.class)))})
     @RequestMapping(value = "/bus-stops",
-        produces = { "application/json" }, 
-        consumes = { "application/json" }, 
-        method = RequestMethod.POST)
-    ResponseEntity<BusStop> createBusStop(@Parameter(in = ParameterIn.DEFAULT, description = "A new bus stop object with name and coordanites.", schema=@Schema()) @Valid @RequestBody BusStop body);
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<BusStop> createBusStop(@Parameter(in = ParameterIn.DEFAULT, description = "A new bus stop object with name and coordanites.", schema = @Schema()) @Valid @RequestBody BusStop body);
 
 
-    @Operation(summary = "Gets all bus stops with given filters.", description = "Queries all bus stops with given optional name and limit filters.", tags={ "LineMangagment" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Returned a list of bus stops which fullfill query params.", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BusStop.class)))) })
+    @Operation(summary = "Gets all bus stops with given filters.", description = "Queries all bus stops with given optional name and limit filters.", tags = {"LineMangagment"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returned a list of bus stops which fullfill query params.", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BusStop.class))))})
     @RequestMapping(value = "/bus-stops",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<BusStop>> readBusStops(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of items to return." ,schema=@Schema(allowableValues={  }, minimum="1", maximum="50"
-, defaultValue="20")) @Valid @RequestParam(value = "maxResults", required = false, defaultValue="20") Integer maxResults, @Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus stops by partial name." ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name);
+            produces = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<BusStop>> readBusStops(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of items to return.", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "50"
+            , defaultValue = "20")) @Valid @RequestParam(value = "maxResults", required = false, defaultValue = "20") Integer maxResults, @Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus stops by partial name.", schema = @Schema()) @Valid @RequestParam(value = "name", required = false) String name);
 
 }
 

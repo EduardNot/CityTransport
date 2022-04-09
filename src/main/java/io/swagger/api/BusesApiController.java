@@ -2,98 +2,86 @@ package io.swagger.api;
 
 import io.swagger.model.Bus;
 import io.swagger.model.ErrorMessage;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.service.BusesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.*;
 import javax.validation.Valid;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-07T09:02:41.194Z[GMT]")
 @RestController
-public class BusesApiController implements BusesApi {
+public class BusesApiController {
 
-    private static final Logger log = LoggerFactory.getLogger(BusesApiController.class);
+    @Autowired
+    private BusesService busesService;
 
-    private final ObjectMapper objectMapper;
 
-    private final HttpServletRequest request;
+    @Operation(summary = "Insert a new bus.", description = "Creates a new bus bus object and save it into database.", tags = {"BusMangagment"})
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200", description = "Returned a new bus object with fullfilled id field from database.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Bus.class))),
 
-    @org.springframework.beans.factory.annotation.Autowired
-    public BusesApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
+            @ApiResponse(
+                    responseCode = "400", description = "Invalid request body content.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))})
+    @RequestMapping(value = "/buses",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    public ResponseEntity<Object> createBus(@Parameter(in = ParameterIn.DEFAULT, description = "Information about new bus.", schema = @Schema()) @Valid @RequestBody Bus body) {
+        return busesService.add(body);
     }
 
-    public ResponseEntity<Bus> createBus(@Parameter(in = ParameterIn.DEFAULT, description = "Information about new bus.", schema=@Schema()) @Valid @RequestBody Bus body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Bus>(objectMapper.readValue("{\n  \"licenceNumber\" : \"460TNP\",\n  \"id\" : 0,\n  \"busLineId\" : 0\n}", Bus.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Bus>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+    @Operation(summary = "Deletes a bus.", description = "Searches for a specific bus with given id and deletes it from database.", tags = {"BusMangagment"})
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204", description = "Bus with given ID deleted successfully."),
 
-        return new ResponseEntity<Bus>(HttpStatus.NOT_IMPLEMENTED);
+            @ApiResponse(
+                    responseCode = "404", description = "Bus with given ID not found error.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))})
+    @RequestMapping(value = "/buses/{busId}",
+            produces = {"application/json"},
+            method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteBus(@Parameter(in = ParameterIn.PATH, description = "Common ID parameter of bus.", required = true, schema = @Schema()) @PathVariable("busId") Integer busId) {
+        return busesService.deleteById(busId);
     }
 
-    public ResponseEntity<Void> deleteBus(@Parameter(in = ParameterIn.PATH, description = "Common ID parameter of bus.", required=true, schema=@Schema()) @PathVariable("busId") Integer busId) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
+    @Operation(summary = "Query a list of buses.", description = "Collects all the buses in databases and returnes them as a list.", tags = {"BusMangagment"})
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200", description = "Returned a list of buses.",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Bus.class))))})
+    @RequestMapping(value = "/buses",
+            produces = {"application/json"},
+            method = RequestMethod.GET)
     public ResponseEntity<List<Bus>> readBuses() {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<Bus>>(objectMapper.readValue("[ {\n  \"licenceNumber\" : \"460TNP\",\n  \"id\" : 0,\n  \"busLineId\" : 0\n}, {\n  \"licenceNumber\" : \"460TNP\",\n  \"id\" : 0,\n  \"busLineId\" : 0\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<Bus>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<List<Bus>>(HttpStatus.NOT_IMPLEMENTED);
+        return busesService.getAll();
     }
 
-    public ResponseEntity<Bus> updateBus(@Parameter(in = ParameterIn.PATH, description = "Common ID parameter of bus.", required=true, schema=@Schema()) @PathVariable("busId") Integer busId,@Parameter(in = ParameterIn.DEFAULT, description = "Information about bus.", required=true, schema=@Schema()) @Valid @RequestBody Bus body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<Bus>(objectMapper.readValue("{\n  \"licenceNumber\" : \"460TNP\",\n  \"id\" : 0,\n  \"busLineId\" : 0\n}", Bus.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Bus>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
+    @Operation(summary = "Updates bus information.", description = "Searches for a specific bus with given id and updates its data.", tags = {"BusMangagment"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returned a updated bus object.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Bus.class))),
 
-        return new ResponseEntity<Bus>(HttpStatus.NOT_IMPLEMENTED);
+            @ApiResponse(responseCode = "400", description = "Invalid request body content.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+
+            @ApiResponse(responseCode = "404", description = "Bus with given ID not found error.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))})
+    @RequestMapping(value = "/buses/{busId}",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.PUT)
+    public ResponseEntity<Object> updateBus(@Parameter(in = ParameterIn.PATH, description = "Common ID parameter of bus.", required = true, schema = @Schema()) @PathVariable("busId") Integer busId, @Parameter(in = ParameterIn.DEFAULT, description = "Information about bus.", required = true, schema = @Schema()) @Valid @RequestBody Bus body) {
+        return busesService.update(busId, body);
     }
 
 }

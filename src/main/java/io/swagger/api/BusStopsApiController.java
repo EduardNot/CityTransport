@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-07T09:02:41.194Z[GMT]")
 @RestController
 public class BusStopsApiController implements BusStopsApi {
 
@@ -48,7 +47,7 @@ public class BusStopsApiController implements BusStopsApi {
         this.request = request;
     }
 
-    public ResponseEntity<BusStop> createBusStop(@Parameter(in = ParameterIn.DEFAULT, description = "A new bus stop object with name and coordanites.", schema=@Schema()) @Valid @RequestBody BusStop body) {
+    public ResponseEntity<BusStop> createBusStop(@Parameter(in = ParameterIn.DEFAULT, description = "A new bus stop object with name and coordanites.", schema = @Schema()) @Valid @RequestBody BusStop body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
@@ -62,8 +61,8 @@ public class BusStopsApiController implements BusStopsApi {
         return new ResponseEntity<BusStop>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<List<BusStop>> readBusStops(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of items to return." ,schema=@Schema(allowableValues={  }, minimum="1", maximum="50"
-, defaultValue="20")) @Valid @RequestParam(value = "maxResults", required = false, defaultValue="20") Integer maxResults,@Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus stops by partial name." ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name) {
+    public ResponseEntity<List<BusStop>> readBusStops(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of items to return.", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "50"
+            , defaultValue = "20")) @Valid @RequestParam(value = "maxResults", required = false, defaultValue = "20") Integer maxResults, @Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus stops by partial name.", schema = @Schema()) @Valid @RequestParam(value = "name", required = false) String name) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {

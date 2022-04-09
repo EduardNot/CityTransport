@@ -24,3 +24,9 @@ hs_err_pid*
 
 .swagger-codegen/
 .swagger-codegen-ignore
+.gradle/
+.idea/
+build/
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+!src/**/build/

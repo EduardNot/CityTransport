@@ -33,30 +33,29 @@ import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-07T09:02:41.194Z[GMT]")
 @Validated
 public interface BusLinesApi {
 
-    @Operation(summary = "Create a bus line", description = "Creates a bus line with given name and bus stops.", tags={ "LineMangagment" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Returned a bus line dto with fullfilled id field", content = @Content(mediaType = "application/json", schema = @Schema(implementation = BusLine.class))),
-        
-        @ApiResponse(responseCode = "400", description = "One of the given bus stops do not exist.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))) })
+    @Operation(summary = "Create a bus line", description = "Creates a bus line with given name and bus stops.", tags = {"LineMangagment"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returned a bus line dto with fullfilled id field", content = @Content(mediaType = "application/json", schema = @Schema(implementation = BusLine.class))),
+
+            @ApiResponse(responseCode = "400", description = "One of the given bus stops do not exist.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))})
     @RequestMapping(value = "/bus-lines",
-        produces = { "application/json" }, 
-        consumes = { "application/json" }, 
-        method = RequestMethod.POST)
-    ResponseEntity<BusLine> createBusLine(@Parameter(in = ParameterIn.DEFAULT, description = "A new bus line object with name and list of bus stops.", schema=@Schema()) @Valid @RequestBody BusLine body);
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    ResponseEntity<BusLine> createBusLine(@Parameter(in = ParameterIn.DEFAULT, description = "A new bus line object with name and list of bus stops.", schema = @Schema()) @Valid @RequestBody BusLine body);
 
 
-    @Operation(summary = "Get all bus lines with given filters.", description = "Queries all bus lines with given optional name, busStopId and limit filters.", tags={ "LineMangagment" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Returned a list of bus stops which fullfill query params.", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BusLine.class)))) })
+    @Operation(summary = "Get all bus lines with given filters.", description = "Queries all bus lines with given optional name, busStopId and limit filters.", tags = {"LineMangagment"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returned a list of bus stops which fullfill query params.", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BusLine.class))))})
     @RequestMapping(value = "/bus-lines",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
-    ResponseEntity<List<BusLine>> readBusLines(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of items to return." ,schema=@Schema(allowableValues={  }, minimum="1", maximum="50"
-, defaultValue="20")) @Valid @RequestParam(value = "maxResults", required = false, defaultValue="20") Integer maxResults, @Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus lines by partial name." ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name, @Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus lines by bus stops." ,schema=@Schema()) @Valid @RequestParam(value = "busStopId", required = false) Integer busStopId);
+            produces = {"application/json"},
+            method = RequestMethod.GET)
+    ResponseEntity<List<BusLine>> readBusLines(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of items to return.", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "50"
+            , defaultValue = "20")) @Valid @RequestParam(value = "maxResults", required = false, defaultValue = "20") Integer maxResults, @Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus lines by partial name.", schema = @Schema()) @Valid @RequestParam(value = "name", required = false) String name, @Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus lines by bus stops.", schema = @Schema()) @Valid @RequestParam(value = "busStopId", required = false) Integer busStopId);
 
 }
 

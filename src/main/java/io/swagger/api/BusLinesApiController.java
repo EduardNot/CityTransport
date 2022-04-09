@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2022-04-07T09:02:41.194Z[GMT]")
 @RestController
 public class BusLinesApiController implements BusLinesApi {
 
@@ -49,7 +48,7 @@ public class BusLinesApiController implements BusLinesApi {
         this.request = request;
     }
 
-    public ResponseEntity<BusLine> createBusLine(@Parameter(in = ParameterIn.DEFAULT, description = "A new bus line object with name and list of bus stops.", schema=@Schema()) @Valid @RequestBody BusLine body) {
+    public ResponseEntity<BusLine> createBusLine(@Parameter(in = ParameterIn.DEFAULT, description = "A new bus line object with name and list of bus stops.", schema = @Schema()) @Valid @RequestBody BusLine body) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
@@ -63,8 +62,8 @@ public class BusLinesApiController implements BusLinesApi {
         return new ResponseEntity<BusLine>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<List<BusLine>> readBusLines(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of items to return." ,schema=@Schema(allowableValues={  }, minimum="1", maximum="50"
-, defaultValue="20")) @Valid @RequestParam(value = "maxResults", required = false, defaultValue="20") Integer maxResults,@Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus lines by partial name." ,schema=@Schema()) @Valid @RequestParam(value = "name", required = false) String name,@Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus lines by bus stops." ,schema=@Schema()) @Valid @RequestParam(value = "busStopId", required = false) Integer busStopId) {
+    public ResponseEntity<List<BusLine>> readBusLines(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of items to return.", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "50"
+            , defaultValue = "20")) @Valid @RequestParam(value = "maxResults", required = false, defaultValue = "20") Integer maxResults, @Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus lines by partial name.", schema = @Schema()) @Valid @RequestParam(value = "name", required = false) String name, @Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus lines by bus stops.", schema = @Schema()) @Valid @RequestParam(value = "busStopId", required = false) Integer busStopId) {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
