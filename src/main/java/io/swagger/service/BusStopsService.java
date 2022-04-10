@@ -5,19 +5,31 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 
 @Service
 public class BusStopsService {
 
     private List<BusStop> busStops;
+    private Set<Integer> busStopIds;
 
     public BusStopsService() {
         this.busStops = new ArrayList<>();
         this.busStops.add(new BusStop("Vene", "58.385787", "26.726408"));
+        this.busStopIds = new HashSet<>();
+        for (BusStop busStop : busStops) {
+            this.busStopIds.add(busStop.getId());
+        }
         sort();
+    }
+
+    public List<BusStop> getBusStops() {
+        return busStops;
+    }
+
+    public Set<Integer> getBusStopIds() {
+        return busStopIds;
     }
 
     //Sort bus stop list by ID
@@ -29,6 +41,7 @@ public class BusStopsService {
     public ResponseEntity<BusStop> add(BusStop body) {
         BusStop busStop = new BusStop(body.getName(), body.getLatitude(), body.getLongitude());
         this.busStops.add(busStop);
+        this.busStopIds.add(busStop.getId());
         sort();
         return new ResponseEntity<>(busStop, HttpStatus.OK);
     }

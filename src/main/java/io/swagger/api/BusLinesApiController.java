@@ -3,6 +3,7 @@ package io.swagger.api;
 import io.swagger.model.BusLine;
 import io.swagger.model.ErrorMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.service.BusLineService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -14,15 +15,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,48 +30,38 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+@Validated
 @RestController
-public class BusLinesApiController implements BusLinesApi {
+public class BusLinesApiController {
 
-    private static final Logger log = LoggerFactory.getLogger(BusLinesApiController.class);
+    @Autowired
+    private BusLineService busLineService;
 
-    private final ObjectMapper objectMapper;
+    @Operation(summary = "Create a bus line", description = "Creates a bus line with given name and bus stops.", tags = {"LineMangagment"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returned a bus line dto with fullfilled id field", content = @Content(mediaType = "application/json", schema = @Schema(implementation = BusLine.class))),
 
-    private final HttpServletRequest request;
-
-    @org.springframework.beans.factory.annotation.Autowired
-    public BusLinesApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
+            @ApiResponse(responseCode = "400", description = "One of the given bus stops do not exist.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))})
+    @RequestMapping(value = "/bus-lines",
+            produces = {"application/json"},
+            consumes = {"application/json"},
+            method = RequestMethod.POST)
+    public ResponseEntity<Object> createBusLine(@Parameter(in = ParameterIn.DEFAULT, description = "A new bus line object with name and list of bus stops.", schema = @Schema()) @Valid @RequestBody BusLine body) {
+        return busLineService.add(body);
     }
 
-    public ResponseEntity<BusLine> createBusLine(@Parameter(in = ParameterIn.DEFAULT, description = "A new bus line object with name and list of bus stops.", schema = @Schema()) @Valid @RequestBody BusLine body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<BusLine>(objectMapper.readValue("{\n  \"busStopIds\" : [ 0, 0 ],\n  \"name\" : \"Kummeli - Ringtee\",\n  \"id\" : 0\n}", BusLine.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<BusLine>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<BusLine>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<List<BusLine>> readBusLines(@Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of items to return.", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "50"
-            , defaultValue = "20")) @Valid @RequestParam(value = "maxResults", required = false, defaultValue = "20") Integer maxResults, @Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus lines by partial name.", schema = @Schema()) @Valid @RequestParam(value = "name", required = false) String name, @Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus lines by bus stops.", schema = @Schema()) @Valid @RequestParam(value = "busStopId", required = false) Integer busStopId) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<BusLine>>(objectMapper.readValue("[ {\n  \"busStopIds\" : [ 0, 0 ],\n  \"name\" : \"Kummeli - Ringtee\",\n  \"id\" : 0\n}, {\n  \"busStopIds\" : [ 0, 0 ],\n  \"name\" : \"Kummeli - Ringtee\",\n  \"id\" : 0\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<BusLine>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<List<BusLine>>(HttpStatus.NOT_IMPLEMENTED);
+    @Operation(summary = "Get all bus lines with given filters.", description = "Queries all bus lines with given optional name, busStopId and limit filters.", tags = {"LineMangagment"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Returned a list of bus stops which fullfill query params.", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = BusLine.class))))})
+    @RequestMapping(value = "/bus-lines",
+            produces = {"application/json"},
+            method = RequestMethod.GET)
+    public ResponseEntity<List<BusLine>> readBusLines(
+            @Min(1) @Max(50) @Parameter(in = ParameterIn.QUERY, description = "The numbers of items to return.", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "50"
+            , defaultValue = "20"))
+            @Valid @RequestParam(value = "maxResults", required = false, defaultValue = "20") Integer maxResults, @Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus lines by partial name.", schema = @Schema()) @Valid @RequestParam(value = "name", required = false) String name,
+            @Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus lines by bus stops.", schema = @Schema()) @Valid @RequestParam(value = "busStopId", required = false) Integer busStopId) {
+        return busLineService.getBusLines(maxResults, name, busStopId);
     }
 
 }

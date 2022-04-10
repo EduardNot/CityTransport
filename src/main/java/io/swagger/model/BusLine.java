@@ -1,5 +1,6 @@
 package io.swagger.model;
 
+import java.util.Collections;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -41,6 +42,12 @@ public class BusLine {
         autoIncrement += 1;
         this.name = name;
         this.busStopIds = busStopIds;
+        Collections.sort(this.busStopIds);
+    }
+
+    public void addToBusStopIds(Integer busStopId) {
+        this.busStopIds.add(busStopId);
+        Collections.sort(this.busStopIds);
     }
 
     /**
