@@ -1,4 +1,4 @@
-package io.swagger.api;
+package io.swagger.controller;
 
 import io.swagger.model.BusStop;
 import io.swagger.service.BusStopsService;

@@ -1,4 +1,4 @@
-package io.swagger.api;
+package io.swagger.controller;
 
 public class NotFoundException extends ApiException {
     private int code;
