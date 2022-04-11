@@ -1,6 +1,8 @@
 package io.swagger.service;
 
+import io.swagger.model.Bus;
 import io.swagger.model.BusStop;
+import io.swagger.model.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -75,5 +77,19 @@ public class BusStopsService {
             }
         }
         return new ResponseEntity<>(returnList, HttpStatus.OK);
+    }
+
+    // Delete a bus stop by its ID
+    public ResponseEntity<Object> deleteById(Integer busStopId) {
+        //Iter through bus stop list and check for same bus stop ID
+        for (BusStop busStop : busStops) {
+            if (busStop.getId().equals(busStopId)) {
+                //If found delete it and return code 204
+                this.busStops.remove(busStop);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+        }
+        //Else return code 404
+        return new ResponseEntity<>(new ErrorMessage("Not Found", 404, "Bus with given ID not found error."), HttpStatus.NOT_FOUND);
     }
 }

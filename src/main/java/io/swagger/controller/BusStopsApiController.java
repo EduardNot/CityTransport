@@ -1,6 +1,7 @@
 package io.swagger.controller;
 
 import io.swagger.model.BusStop;
+import io.swagger.model.ErrorMessage;
 import io.swagger.service.BusStopsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,6 +51,21 @@ public class BusStopsApiController {
             @Parameter(in = ParameterIn.QUERY, description = "Optional parameter to filter bus stops by partial name.", schema = @Schema())
             @Valid @RequestParam(value = "name", required = false) String name) {
         return busStopsService.getAll(maxResults, name);
+    }
+
+    @Operation(summary = "Deletes a bus stop.", description = "Searches for a specific bus stop with given id and deletes it from database.", tags = {"BusMangagment"})
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204", description = "Bus stop with given ID deleted successfully."),
+
+            @ApiResponse(
+                    responseCode = "404", description = "Bus stop with given ID not found error.",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))})
+    @RequestMapping(value = "/bus-stops/{busStopId}",
+            produces = {"application/json"},
+            method = RequestMethod.DELETE)
+    public ResponseEntity<Object> deleteBusStop (@Parameter(in = ParameterIn.PATH, description = "Common ID parameter of bus.", required = true, schema = @Schema()) @PathVariable("busStopId") Integer busStopId) {
+        return busStopsService.deleteById(busStopId);
     }
 
 }
